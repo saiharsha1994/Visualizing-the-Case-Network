@@ -1,0 +1,179 @@
+
+
+	<html>
+
+	<script src='defiant.js.js'></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js">
+		
+	</script>
+	 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<style>
+
+	h1{
+	  font-size: 30px;
+	  color: #fff;
+	  text-transform: uppercase;
+	  font-weight: 300;
+	  text-align: center;
+	  margin-bottom: 15px;
+	}
+	table{
+	  width:100%;
+	  table-layout: fixed;
+
+	}
+	.tbl-header{
+	  background-color: rgba(255,255,255,0.3);
+	 }
+	.tbl-content{
+	  height:200px;
+	  overflow-x:auto;
+	  margin-top: 0px;
+	  border: 1px solid rgba(255,255,255,0.3);
+	}
+	th{
+	  padding: 20px 15px;
+	  text-align: center;
+	  font-weight: 500;
+	  font-size: 12px;
+	  color: #fff;
+	  text-transform: uppercase;
+	  background-color: black; 
+	}
+	td{
+	  padding: 15px;
+	  vertical-align:middle;
+	  font-weight: 300;
+	  font-size: 12px;
+	  color: #fff;
+	  text-align: center;
+	  border-bottom: solid 1px rgba(255,255,255,0.1);
+	}
+
+
+	/* demo styles */
+
+	@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+	body{
+	  background: -webkit-linear-gradient(left, #21201e, #21201e);
+	  background: linear-gradient(to right, #21201e, #21201e);
+	  font-family: 'Roboto', sans-serif;
+	}
+	section{
+	  margin: 50px;
+	}
+
+
+	/* follow me template */
+	.made-with-love {
+	  margin-top: 40px;
+	  padding: 10px;
+	  clear: left;
+	  text-align: center;
+	  font-size: 10px;
+	  font-family: arial;
+	  color: #fff;
+	}
+	.made-with-love i {
+	  font-style: normal;
+	  color: #F50057;
+	  font-size: 14px;
+	  position: relative;
+	  top: 2px;
+	}
+	.made-with-love a {
+	  color: #fff;
+	  text-decoration: none;
+	}
+	.made-with-love a:hover {
+	  text-decoration: underline;
+	}
+
+
+	/* for custom scrollbar for webkit browser*/
+
+	::-webkit-scrollbar {
+	    width: 6px;
+	} 
+	::-webkit-scrollbar-track {
+	    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+	} 
+	::-webkit-scrollbar-thumb {
+	    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+	}
+	</style>
+	
+	<script>
+			function case_view(){
+				
+
+				srch=localStorage.getItem("search_key").toLowerCase();
+				//srch=srch.;
+				//alert(srch);
+				$.getJSON('edges.json',function(graphs) {
+				    for(var i=0; i< graphs.length; i++){
+
+				    var lc= graphs[i].name.toLowerCase();
+				    if (lc.search(srch) != -1) {
+			   var table = document.getElementById("cases");
+			    var row = table.insertRow(1);
+			    var cell1 = row.insertCell(0);
+			    var cell2 = row.insertCell(1);
+			     var cell3 = row.insertCell(2);
+			    var cell4 = row.insertCell(3);
+
+			    cell1.innerHTML = graphs[i].id;
+			    //cell1.setAttribute("name",graphs[i].id);
+			    cell2.innerHTML = graphs[i].name;
+			    cell3.innerHTML = graphs[i].link;
+			    
+			    var element = document.createElement("input");
+    			element.setAttribute("type", "button");
+    			element.setAttribute("value", "Visualize");
+    			element.setAttribute("name", graphs[i].id);
+    			element.setAttribute("onclick", "visualize_node(this.name)");
+    			//document.getElementById.
+    			//alert(element.getAttribute("name"));
+    			cell4.appendChild(element);
+		}
+	   }
+	});
+	}
+	function visualize_node(name){
+		//alert(name);
+		localStorage.setItem("MainNode",name);
+		//alert(localStorage.getItem("MainNode"));
+		 window.location= "/Graph.html"
+	}
+	</script>
+	<body onload="case_view()">
+
+	<section> 
+	  <!--for demo wrap-->
+	  <h1>Search Results</h1>
+	  <div class="tbl-header">
+	    <table cellpadding="0" cellspacing="0" border="0"n id="cases">
+	      <thead>
+	        <tr>
+	          <th width="10%">Case ID</th>
+	          <th width="35%">Name Of Case</th>
+	          <th width="35%">Link to Case</th>
+	          <th width="10%"> View Graph </th>
+	        </tr>
+	      </thead>
+	    </table>
+	  </div>
+	  <div class="tbl-content">
+	    <table cellpadding="0" cellspacing="0" border="0">
+	      <tbody>
+	        
+	        
+	      </tbody>
+	    </table>
+	  </div>
+	</section>
+
+	</body>
+	</html>
+

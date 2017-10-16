@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+  <title>Network | Basic usage</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">  
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style type="text/css">
+        #mynetwork {
+            width: auto ;
+            height: 650px;
+            border: 1px solid lightgray;
+        }
+    </style>
+    <style>
+    img {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+}
+</style>
+</head>
+<body onload="create_node(-1)">
+<!-- Modal -->
+<img src="legends.png" width="200" height="230">
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+            <!--<a href="" id="myLink"></a>-->
+           <a href="" id="linkage"><p class="link">Some text in the modal.</p></a> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+<div id="mynetwork"></div>
+
+<script type="text/javascript" >
+  // create an array with nodes
+var _nodes = new vis.DataSet();
+var _edges = new vis.DataSet();
+var global_nodes=[];
+var container = document.getElementById('mynetwork');
+var data = {
+  nodes: _nodes,
+  edges: _edges,
+};
+var options = {
+  autoResize: true,
+  clickToUse: false,
+  interaction: {hover:true,
+   navigationButtons: true,
+    keyboard: true},
+      physics:{
+    enabled: true,
+    forceAtlas2Based: {
+      gravitationalConstant: -50,
+      centralGravity: 0.01,
+      springConstant: 0.08,
+      springLength: 100,
+      damping: 1,
+      avoidOverlap: 0
+    },
+  solver: 'forceAtlas2Based',}
+      
+};
+var network = new vis.Network(container, data, options);
+network.on("click", function (params) {
+        params.event = "[original event]";
+if(params.nodes>0){
+		expand_this(this.getNodeAt(params.pointer.DOM));
+}
+
+        //document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + JSON.stringify(params, null, 4);
+        //console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+    });
+network.on("doubleClick", function (params) {
+        params.event = "[original event]";
+        
+        for (var i=0; i<outside_array.length; i++){
+                if (outside_array[i][0]==params.nodes){
+                    //alert(outside_array[i][0]);
+                    $('#myModal').modal('show');
+                    $('.modal .modal-title').html(outside_array[i][1]); 
+                    $('.modal .link').html(outside_array[i][2]);
+
+                    $('#linkage').click(function() {
+                      //alert(outside_array[i][2]);
+                      //window.location=outside_array[i][2];
+        //             $('.modal-body').load($(this).data('href'), function(e) {
+        //             $('#linkage').data('href')=outside_array[i][2];
+        // });
+    });
+                    document.getElementById("linkage").setAttribute("href",outside_array[i][2]);    
+                }
+        }
+        //document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + JSON.stringify(params, null, 4);
+        //console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+    });
+
+var linked_nodes = [];
+var linked_nodes_dis = [];
+var linked_nodes123 = [];
+var linked_nodes_dis123 = [];
+var inside_array = [];
+var outside_array = [];
+var global_clicks = [];
+
+function create_node(search){
+  if(search == -1){
+    search=localStorage.getItem("MainNode");
+  }
+//alert(search);
+$.getJSON('edges.json', function(graphs) {
+//alert(graphs.length);
+//alert(global_nodes);
+global_clicks.push(search.toString());
+for (var i=0, l = graphs.length;  i<l; i++){
+if(graphs[i].id==search){
+if(global_nodes.indexOf(search.toString()) == -1){
+   inside_array.push(graphs[i].id);
+   inside_array.push(graphs[i].name);
+   inside_array.push(graphs[i].link);
+	_nodes.add({id: graphs[i].id,label: graphs[i].id, title: graphs[i].name, shape: 'ellipse', color:'#d5d6c9'});
+	global_nodes.push(graphs[i].id);
+  outside_array.push(inside_array);
+  inside_array=[];
+//alert(graphs[i]);
+}
+for(var j in graphs[i].carr){
+	//alert(graphs[i].carr[0][1]);
+if(global_nodes.indexOf(graphs[i].carr[j][0].toString()) == -1){
+	linked_nodes.push(graphs[i].carr[j][0]);
+  linked_nodes_dis.push(graphs[i].carr[j][1]);
+	global_nodes.push(graphs[i].carr[j][0]);
+}
+else{
+  linked_nodes123.push(graphs[i].carr[j][0]);
+  linked_nodes_dis123.push(graphs[i].carr[j][1]);
+  console.log(graphs[i].carr[j][0]);
+  console.log(graphs[i].carr[j][1]);
+}	
+	//_edges.add({from: graphs[i].id,to: graphs[i].carr[j]});
+}
+//linked_nodes.sort();
+//alert(linked_nodes);
+add_linked_nodes(graphs);
+//adding edges
+for (var j=0; j<linked_nodes.length; j++){
+    if(linked_nodes_dis[j]=="cited"){
+        _edges.add({from: search, to: linked_nodes[j], arrows:'to', color:{color:'red'}, label: linked_nodes_dis[j],     font: {align: 'middle'}});
+    }
+    else if(linked_nodes_dis[j]=="referred to"){
+        _edges.add({from: search, to: linked_nodes[j], arrows:'to', color:{color:'black'}, label: linked_nodes_dis[j],     font: {align: 'middle'}});
+    }
+    else{
+        _edges.add({from: search, to: linked_nodes[j], arrows:'to', dashes:[1,5,1,5], color:{color:'blue'}, label: linked_nodes_dis[j],     font: {align: 'middle'}});
+    }
+}
+
+for (var j=0; j<linked_nodes123.length; j++){
+  //alert(linked_nodes123[j]+" : "+linked_nodes_dis123[j]);
+    if(linked_nodes_dis123[j]=="cited"){
+        _edges.add({from: search, to: linked_nodes123[j], arrows:'to', color:{color:'red'}, label: linked_nodes_dis123[j],     font: {align: 'middle'}});
+    }
+    else if(linked_nodes_dis[j]=="referred to"){
+        _edges.add({from: search, to: linked_nodes123[j], arrows:'to', color:{color:'black'}, label: linked_nodes_dis123[j],     font: {align: 'middle'}});
+    }
+    else{
+        _edges.add({from: search, to: linked_nodes123[j], arrows:'to', dashes:[1,5,1,5], color:{color:'blue'}, label: linked_nodes_dis123[j],     font: {align: 'middle'}});
+    }
+}
+
+}//if ends
+}
+});
+}
+function expand_this(curr_node_ID){
+	linked_nodes=[];
+  linked_nodes_dis=[];
+  linked_nodes123=[];
+  linked_nodes_dis123=[];
+//alert(curr_node_iD);
+//alert(JSON.stringify(params, null, 4));	
+  if(global_clicks.indexOf(curr_node_ID.toString()) == -1){
+    create_node(curr_node_ID);
+    }
+   else{
+
+    }
+	
+
+}
+//fetching nodes for related or cited nodes
+function add_linked_nodes(graphs){
+//alert(linked_nodes.length);
+for (var j=0; j<linked_nodes.length; j++){
+for (var i=0; i<graphs.length; i++){
+if(graphs[i].id==linked_nodes[j]){
+	//alert(graphs[i].id)
+    inside_array.push(graphs[i].id);
+   inside_array.push(graphs[i].name);
+   inside_array.push(graphs[i].link);
+	_nodes.add({id: graphs[i].id, label: graphs[i].id, title: graphs[i].name, shape: 'dot', shape: 'ellipse', color:'#7BE141'});
+  outside_array.push(inside_array);
+  inside_array=[];
+}
+}
+}
+}
+$.getJSON('nodes.json', function(nodes) {
+// _nodes.add(nodes);
+});  
+  
+</script>
+
+</body>
+</html>
