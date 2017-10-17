@@ -4,11 +4,16 @@ This project was developed by us in 24 hours for the LexisNexis 2017 Rise To Cod
 
 ## Team members:
 Chandrahas Reddy
+
 Sai Harsha Suryadevara
+
 Shyam Prasad Katta
+
 Shubankar Reddy
+
 Srinivas Parasa
-Mentor: Jerry
+
+**Mentor**: Jerry McGhee
 
 ## Project Description:
 In order to effectively analyze a legal case, legal researchers must have quick access to all the subsequent rulings that cite the case they are analyzing.
