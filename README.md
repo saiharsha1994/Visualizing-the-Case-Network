@@ -27,3 +27,5 @@ Sample Case: Australian Competition and Consumer Commission
 A video made by us to explain the wokring of the project:  
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=k17mBFQFmTc" target="_blank"><img src="http://img.youtube.com/vi/k17mBFQFmTc/0.jpg" alt="Video" width="240" height="180" border="10" /></a>
+
+## Project Requirements: http://hackathon.lexisnexis.com/index.html
